@@ -1,37 +1,10 @@
 #include <nftstaking.hpp>
 
-ACTION nftstaking::hi(name from, string message) {
-  require_auth(from);
 
-  // Init the _message table
-  messages_table _messages(get_self(), get_self().value);
+ACTION nftstaking::stakenfts(name user, vector<uint64_t> asset_ids) {}
+ACTION nftstaking::unstakenfts(name user, vector<uint64_t> asset_ids) {}
+ACTION nftstaking::claimrewards(name user) {}
+ACTION nftstaking::addwhitelist(name user) {}
+ACTION nftstaking::remwhitelist(name user) {}
 
-  // Find the record from _messages table
-  auto msg_itr = _messages.find(from.value);
-  if (msg_itr == _messages.end()) {
-    // Create a message record if it does not exist
-    _messages.emplace(from, [&](auto& msg) {
-      msg.user = from;
-      msg.text = message;
-    });
-  } else {
-    // Modify a message record if it exists
-    _messages.modify(msg_itr, from, [&](auto& msg) {
-      msg.text = message;
-    });
-  }
-}
-
-ACTION nftstaking::clear() {
-  require_auth(get_self());
-
-  messages_table _messages(get_self(), get_self().value);
-
-  // Delete all records in _messages table
-  auto msg_itr = _messages.begin();
-  while (msg_itr != _messages.end()) {
-    msg_itr = _messages.erase(msg_itr);
-  }
-}
-
-EOSIO_DISPATCH(nftstaking, (hi)(clear))
+EOSIO_DISPATCH(nftstaking, (stakenfts)(unstakenfts)(claimrewards)(addwhitelist)(remwhitelist));
